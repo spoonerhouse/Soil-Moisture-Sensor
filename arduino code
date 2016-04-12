@@ -1,0 +1,39 @@
+int motor = 8;
+int probe = 5;
+int moistureSensor = A0;
+
+int sensorValue = 0;
+long previousMillis = 0;
+long interval = 30000;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(motor, OUTPUT); //motor is Output
+  pinMode(probe, OUTPUT); //probe (probe's + connection) is output
+  pinMode(moistureSensor, INPUT); //moisture sensor is Input
+  digitalWrite(probe, HIGH);  //turn on probe
+  delay(1000);        //wait 1 second
+  int sensorValue = analogRead(moistureSensor);   //read moistureSensor
+  Serial.println(sensorValue);    //store value
+  digitalWrite(probe, LOW);   //turn off sensor
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+  int sensorValue = analogRead(moistureSensor);
+  if(currentMillis - previousMillis > interval) {
+    previousMillis = currentMillis;
+    digitalWrite(probe, HIGH);
+    delay(2);
+    int sensorValue = analogRead(moistureSensor);
+
+    Serial.println(sensorValue);
+    if (sensorValue < 400)  {
+      digitalWrite(probe, LOW);
+      digitalWrite(motor, HIGH);
+      delay(15000);
+      digitalWrite(motor, LOW);
+    }
+    digitalWrite(probe, LOW);
+  }
+}
